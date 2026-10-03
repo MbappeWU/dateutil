@@ -2674,6 +2674,21 @@ class RRuleTest(unittest.TestCase):
                           datetime(1998, 9, 2, 9, 0),
                           datetime(1999, 9, 2, 9, 0)])
 
+    def testStrUnfoldsSpaceAndTabContinuations(self):
+        expected = [datetime(2026, 1, 1), datetime(2026, 1, 2)]
+        for whitespace in (" ", "\t"):
+            with self.subTest(whitespace=repr(whitespace)):
+                self.assertEqual(
+                    list(
+                        rrulestr(
+                            "RRULE:FREQ=DAILY;\r\n" + whitespace + "COUNT=2",
+                            dtstart=datetime(2026, 1, 1),
+                            unfold=True,
+                        )
+                    ),
+                    expected,
+                )
+
     def testStrWithTZID(self):
         NYC = tz.gettz('America/New_York')
         self.assertEqual(list(rrulestr(
